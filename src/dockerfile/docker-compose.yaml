@@ -1,0 +1,7 @@
+services:
+  app:
+    image: delez133/timemanager:latest
+    ports:
+      - "8080:8080"
+    volumes:
+      - /mnt:/sqlite
