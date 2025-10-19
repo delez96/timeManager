@@ -3,7 +3,7 @@ package ru.kurilov.time.manager.model;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Data
@@ -13,7 +13,7 @@ public class EventModel {
     private Long id;
     private Long userId;
     private String eventName;
-    private OffsetDateTime eventDateTime;
+    private LocalDateTime eventDateTime;
 
     public String toMessage(int count) {
         return count + ": Событие: " + eventName + "\nВремя: "

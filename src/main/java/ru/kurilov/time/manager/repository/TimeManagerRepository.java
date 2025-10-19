@@ -1,4 +1,4 @@
-package ru.kurilov.time.manager.service;
+package ru.kurilov.time.manager.repository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.simple.JdbcClient;
@@ -6,9 +6,15 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.kurilov.time.manager.model.EventModel;
 
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static org.apache.commons.collections4.ListUtils.emptyIfNull;
 
 @Repository
 @RequiredArgsConstructor
@@ -16,6 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class TimeManagerRepository {
 
     private final JdbcClient jdbcClient;
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public int addEvent(EventModel eventModel) {
         return jdbcClient.sql("""
@@ -23,7 +30,8 @@ public class TimeManagerRepository {
                         VALUES (:userId, :event, :eventTime)""")
                 .param("event", eventModel.getEventName())
                 .param("userId", eventModel.getUserId())
-                .param("eventTime", eventModel.getEventDateTime())
+                .param("eventTime", eventModel.getEventDateTime().minusHours(3)
+                        .format(formatter))
                 .update();
     }
 
@@ -37,7 +45,7 @@ public class TimeManagerRepository {
                 .param("userId", userId)
                 .query((rs, rowNum) -> new EventModel()
                         .setEventName(rs.getString("EVENT_NAME"))
-                        .setEventDateTime(OffsetDateTime.parse(rs.getString("EVENT_DATE_TIME")))
+                        .setEventDateTime(LocalDateTime.parse(rs.getString("EVENT_DATE_TIME")).plusHours(3))
                         .toMessage(count.incrementAndGet()))
                 .list();
     }
@@ -73,7 +81,7 @@ public class TimeManagerRepository {
                 .param("userIdChose", userIdChose - 1)
                 .query((rs, rowNum) -> new EventModel()
                         .setEventName(rs.getString("EVENT_NAME"))
-                        .setEventDateTime(OffsetDateTime.parse(rs.getString("EVENT_DATE_TIME"))))
+                        .setEventDateTime(LocalDateTime.parse(rs.getString("EVENT_DATE_TIME")).plusHours(3)))
                 .single();
     }
 
@@ -87,7 +95,7 @@ public class TimeManagerRepository {
                 .param("userId", userId)
                 .query((rs, rowNum) -> new EventModel()
                         .setEventName(rs.getString("EVENT_NAME"))
-                        .setEventDateTime(OffsetDateTime.parse(rs.getString("EVENT_DATE_TIME")))
+                        .setEventDateTime(LocalDateTime.parse(rs.getString("EVENT_DATE_TIME")).plusHours(3))
                         .toMessage(count.incrementAndGet()))
                 .list();
     }
@@ -102,8 +110,30 @@ public class TimeManagerRepository {
                 .param("userId", userId)
                 .query((rs, rowNum) -> new EventModel()
                         .setEventName(rs.getString("EVENT_NAME"))
-                        .setEventDateTime(OffsetDateTime.parse(rs.getString("EVENT_DATE_TIME")))
+                        .setEventDateTime(LocalDateTime.parse(rs.getString("EVENT_DATE_TIME")).plusHours(3))
                         .toMessage(count.incrementAndGet()))
                 .list();
     }
+
+    public Map<Long, List<String>> getEventsForDay() {
+        HashMap<Long, List<String>> byUser = new HashMap<>();
+        List<EventModel> listResult = jdbcClient.sql("""
+                        SELECT * FROM EVENTS
+                        WHERE EVENT_DATE_TIME BETWEEN datetime('now') AND datetime('now', '+1 day')
+                        ORDER BY EVENT_DATE_TIME""")
+                .query((rs, rowNum) -> new EventModel()
+                        .setEventName(rs.getString("EVENT_NAME"))
+                        .setUserId(rs.getLong("USER_ID"))
+                        .setEventDateTime(LocalDateTime.parse(rs.getString("EVENT_DATE_TIME"), formatter).plusHours(3)))
+                .list();
+        emptyIfNull(listResult).forEach(ev -> {
+            if (byUser.get(ev.getUserId()) == null) {
+                byUser.put(ev.getUserId(), new ArrayList<>(List.of(ev.toMessage())));
+            } else {
+                byUser.get(ev.getUserId()).add(ev.toMessage());
+            }
+        });
+        return byUser;
+    }
+
 }

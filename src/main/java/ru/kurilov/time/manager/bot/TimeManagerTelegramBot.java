@@ -17,7 +17,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.kurilov.time.manager.configuration.MainConfigurationProperties;
 import ru.kurilov.time.manager.model.EventModel;
 import ru.kurilov.time.manager.service.AiTextAnalyzer;
-import ru.kurilov.time.manager.service.TimeManagerRepository;
+import ru.kurilov.time.manager.repository.TimeManagerRepository;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -67,13 +67,13 @@ public class TimeManagerTelegramBot extends TelegramLongPollingBot {
                     execute(question);
                 } else if ("/events".equals(message.getText())) {
                     List<String> events = timeManagerRepository.getEvents(chatId);
-                    eventsResponce(events, chatId);
+                    eventsResponse(events, chatId);
                 } else if ("/today".equals(message.getText())) {
                     List<String> events = timeManagerRepository.getEventsToday(chatId);
-                    eventsResponce(events, chatId);
+                    eventsResponse(events, chatId);
                 } else if ("/tomorrow".equals(message.getText())) {
                     List<String> events = timeManagerRepository.getEventsTomorrow(chatId);
-                    eventsResponce(events, chatId);
+                    eventsResponse(events, chatId);
                 } else if ("/delete".equals(message.getText())) {
                     execute(createMessage(chatId, timeManagerRepository.getEvents(chatId)));
                     SendMessage question = new SendMessage();
@@ -118,7 +118,20 @@ public class TimeManagerTelegramBot extends TelegramLongPollingBot {
         }
     }
 
-    private void eventsResponce(List<String> events, Long chatId) throws TelegramApiException {
+    public SendMessage createMessage(long chatId, List<String> messages) {
+        SendMessage message = new SendMessage();
+        message.setChatId(String.valueOf(chatId));
+        StringBuilder sb = new StringBuilder();
+        if (messages.size() > 1) {
+            messages.forEach(msg -> sb.append(msg).append("\n=====================\n"));
+            message.setText(sb.toString());
+        } else {
+            message.setText(messages.get(0));
+        }
+        return message;
+    }
+
+    private void eventsResponse(List<String> events, Long chatId) throws TelegramApiException {
         if (events.isEmpty()) {
             execute(createMessage(chatId, Collections.singletonList("Событий не найдено")));
         } else {
@@ -201,20 +214,6 @@ public class TimeManagerTelegramBot extends TelegramLongPollingBot {
         InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
         markup.setKeyboard(rows);
         return markup;
-    }
-
-    private SendMessage createMessage(long chatId, List<String> messages) {
-
-        SendMessage message = new SendMessage();
-        message.setChatId(String.valueOf(chatId));
-        StringBuilder sb = new StringBuilder();
-        if (messages.size() > 1) {
-            messages.forEach(msg -> sb.append(msg).append("\n=====================\n"));
-            message.setText(sb.toString());
-        } else {
-            message.setText(messages.get(0));
-        }
-        return message;
     }
 
 }

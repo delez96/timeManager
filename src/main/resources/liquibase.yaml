@@ -27,3 +27,8 @@ databaseChangeLog:
                   type: text
                   constraints:
                     nullable: false
+  - changeSet:
+      id: 2
+      author: kurilov
+      changes:
+        - sql: DELETE FROM events;

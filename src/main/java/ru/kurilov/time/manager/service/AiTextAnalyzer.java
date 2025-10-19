@@ -11,7 +11,6 @@ import ru.kurilov.time.manager.model.EventModel;
 
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
 @Service
@@ -36,19 +35,16 @@ public class AiTextAnalyzer {
         if (entity == null || StringUtils.isBlank(entity.eventDateTime) || StringUtils.isBlank(entity.eventName)) {
             return null;
         }
-        OffsetDateTime eventDateTime = getDateTime(text, entity);
+        LocalDateTime eventDateTime = getDateTime(text, entity);
         return new EventModel()
                 .setEventName(entity.eventName)
                 .setEventDateTime(eventDateTime)
                 .setUserId(chatId);
     }
 
-    private OffsetDateTime getDateTime(String text, Event entity) {
-        OffsetDateTime eventDateTime = OffsetDateTime.ofInstant(
-                LocalDateTime.parse(entity.eventDateTime,
-                                DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))
-                        .toInstant(ZoneOffset.ofHours(3)),
-                ZoneOffset.ofHours(3));
+    private LocalDateTime getDateTime(String text, Event entity) {
+        LocalDateTime eventDateTime = LocalDateTime.parse(entity.eventDateTime,
+                DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"));
         if (text.contains("сегодня")) {
             eventDateTime = eventDateTime.withMonth(OffsetDateTime.now().getMonthValue());
             eventDateTime = eventDateTime.withDayOfMonth(OffsetDateTime.now().getDayOfMonth());
@@ -59,7 +55,7 @@ public class AiTextAnalyzer {
             eventDateTime = eventDateTime.withMonth(OffsetDateTime.now().getMonthValue());
             eventDateTime = eventDateTime.withDayOfMonth(OffsetDateTime.now().getDayOfMonth() + 1);
         }
-        if (eventDateTime.isBefore(OffsetDateTime.now())) {
+        if (eventDateTime.isBefore(LocalDateTime.now())) {
             eventDateTime = eventDateTime.withYear(OffsetDateTime.now().getYear());
         }
         return eventDateTime;
