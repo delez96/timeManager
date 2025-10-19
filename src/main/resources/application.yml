@@ -1,0 +1,22 @@
+time:
+  manager:
+    tg-api-token: ${TG_TOKEN}
+    user-name: time_manager
+
+spring:
+  datasource:
+    driver-class-name: org.sqlite.JDBC
+    url: jdbc:sqlite:src/main/resources/database.db
+  liquibase:
+    change-log: classpath:classpath:liquibase.yaml
+    enabled: true
+  ai:
+    openai:
+      api-key: ${API_OPEN_ROUTE}
+      base-url: https://openrouter.ai/api
+      chat:
+        options:
+          model: google/gemini-2.5-flash-image
+          #          model: anthropic/claude-sonnet-4
+          #model: openai/gpt-4.1
+          temperature: 0.00001

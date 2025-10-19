@@ -1,0 +1,29 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: kurilov
+      changes:
+        - createTable:
+            tableName: events
+            columns:
+              - column:
+                  name: id
+                  type: INTEGER
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: user_id
+                  type: java.lang.Long
+                  constraints:
+                    nullable: false
+              - column:
+                  name: event_name
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: event_date_time
+                  type: text
+                  constraints:
+                    nullable: false
