@@ -1,6 +1,9 @@
 services:
   app:
     image: delez133/timemanager:v3
+    environment:
+      - TG_TOKEN
+      - API_OPEN_ROUTE
     ports:
       - "8080:8080"
     volumes:

@@ -7,8 +7,11 @@ WORKDIR /app
 # Копируем собранный jar-файл проекта в контейнер
 COPY ./target/timeManager-1.0-SNAPSHOT.jar /app/app.jar
 
-ENV API_OPEN_ROUTE=...
-ENV TG_TOKEN=...
+ARG TG_TOKEN
+ARG API_OPEN_ROUTE
+
+ENV API_OPEN_ROUTE=${API_OPEN_ROUTE}
+ENV TG_TOKEN=${TG_TOKEN}
 
 # Открываем порт 8080 для доступа к приложению
 EXPOSE 8080
