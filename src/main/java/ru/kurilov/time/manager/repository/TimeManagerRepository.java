@@ -105,7 +105,7 @@ public class TimeManagerRepository {
         return jdbcClient.sql("""
                         SELECT * FROM EVENTS
                         WHERE USER_ID = :userId
-                        AND EVENT_DATE_TIME BETWEEN datetime('now') AND datetime('now', '+1 day')
+                        AND EVENT_DATE_TIME BETWEEN datetime('now') AND date('now', '+1 day')
                         ORDER BY EVENT_DATE_TIME""")
                 .param("userId", userId)
                 .query((rs, rowNum) -> new EventModel()
