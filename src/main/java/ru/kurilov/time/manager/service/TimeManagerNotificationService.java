@@ -19,7 +19,7 @@ public class TimeManagerNotificationService {
     private final TimeManagerRepository timeManagerRepository;
     private final TimeManagerTelegramBot timeManagerTelegramBot;
 
-    @Scheduled(cron = "0 00 6 * * *")
+    @Scheduled(cron = "0 00 3 * * *")
     public void sendNotification() throws TelegramApiException {
         Map<Long, List<String>> eventsForDay = timeManagerRepository.getEventsForDay();
         for (Map.Entry<Long, List<String>> entry : eventsForDay.entrySet()) {

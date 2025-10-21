@@ -6,7 +6,7 @@ time:
 spring:
   datasource:
     driver-class-name: org.sqlite.JDBC
-    url: jdbc:sqlite:sqlite/database.db
+    url: jdbc:sqlite:/sqlite/database.db
   liquibase:
     change-log: liquibase.yaml
     enabled: true

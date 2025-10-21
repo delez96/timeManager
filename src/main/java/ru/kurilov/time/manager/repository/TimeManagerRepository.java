@@ -45,7 +45,7 @@ public class TimeManagerRepository {
                 .param("userId", userId)
                 .query((rs, rowNum) -> new EventModel()
                         .setEventName(rs.getString("EVENT_NAME"))
-                        .setEventDateTime(LocalDateTime.parse(rs.getString("EVENT_DATE_TIME")).plusHours(3))
+                        .setEventDateTime(LocalDateTime.parse(rs.getString("EVENT_DATE_TIME"), formatter).plusHours(3))
                         .toMessage(count.incrementAndGet()))
                 .list();
     }
@@ -81,7 +81,7 @@ public class TimeManagerRepository {
                 .param("userIdChose", userIdChose - 1)
                 .query((rs, rowNum) -> new EventModel()
                         .setEventName(rs.getString("EVENT_NAME"))
-                        .setEventDateTime(LocalDateTime.parse(rs.getString("EVENT_DATE_TIME")).plusHours(3)))
+                        .setEventDateTime(LocalDateTime.parse(rs.getString("EVENT_DATE_TIME"), formatter).plusHours(3)))
                 .single();
     }
 
@@ -95,7 +95,7 @@ public class TimeManagerRepository {
                 .param("userId", userId)
                 .query((rs, rowNum) -> new EventModel()
                         .setEventName(rs.getString("EVENT_NAME"))
-                        .setEventDateTime(LocalDateTime.parse(rs.getString("EVENT_DATE_TIME")).plusHours(3))
+                        .setEventDateTime(LocalDateTime.parse(rs.getString("EVENT_DATE_TIME"), formatter).plusHours(3))
                         .toMessage(count.incrementAndGet()))
                 .list();
     }
@@ -110,7 +110,7 @@ public class TimeManagerRepository {
                 .param("userId", userId)
                 .query((rs, rowNum) -> new EventModel()
                         .setEventName(rs.getString("EVENT_NAME"))
-                        .setEventDateTime(LocalDateTime.parse(rs.getString("EVENT_DATE_TIME")).plusHours(3))
+                        .setEventDateTime(LocalDateTime.parse(rs.getString("EVENT_DATE_TIME"), formatter).plusHours(3))
                         .toMessage(count.incrementAndGet()))
                 .list();
     }
