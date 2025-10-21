@@ -40,7 +40,7 @@ public class TimeManagerRepository {
         return jdbcClient.sql("""
                         SELECT * FROM EVENTS
                         WHERE USER_ID = :userId
-                        AND EVENT_DATE_TIME > date('now')
+                        AND EVENT_DATE_TIME > datetime('now')
                         ORDER BY EVENT_DATE_TIME""")
                 .param("userId", userId)
                 .query((rs, rowNum) -> new EventModel()
@@ -54,7 +54,7 @@ public class TimeManagerRepository {
         Long id = jdbcClient.sql("""
                         SELECT ID FROM EVENTS
                         WHERE USER_ID = :userId
-                        AND EVENT_DATE_TIME > date('now')
+                        AND EVENT_DATE_TIME > datetime('now')
                         ORDER BY EVENT_DATE_TIME
                         LIMIT 1 OFFSET :userIdChose
                         """)
@@ -73,7 +73,7 @@ public class TimeManagerRepository {
         return jdbcClient.sql("""
                         SELECT * FROM EVENTS
                         WHERE USER_ID = :userId
-                        AND EVENT_DATE_TIME > date('now')
+                        AND EVENT_DATE_TIME > datetime('now')
                         ORDER BY EVENT_DATE_TIME
                         LIMIT 1 OFFSET :userIdChose
                         """)
@@ -90,7 +90,7 @@ public class TimeManagerRepository {
         return jdbcClient.sql("""
                         SELECT * FROM EVENTS
                         WHERE USER_ID = :userId
-                        AND EVENT_DATE_TIME BETWEEN date('now', '+1 day') AND date('now', '+2 day')
+                        AND EVENT_DATE_TIME BETWEEN datetime('now', '+1 day') AND datetime('now', '+2 day')
                         ORDER BY EVENT_DATE_TIME""")
                 .param("userId", userId)
                 .query((rs, rowNum) -> new EventModel()
@@ -105,7 +105,7 @@ public class TimeManagerRepository {
         return jdbcClient.sql("""
                         SELECT * FROM EVENTS
                         WHERE USER_ID = :userId
-                        AND EVENT_DATE_TIME BETWEEN date('now') AND date('now', '+1 day')
+                        AND EVENT_DATE_TIME BETWEEN datetime('now') AND datetime('now', '+1 day')
                         ORDER BY EVENT_DATE_TIME""")
                 .param("userId", userId)
                 .query((rs, rowNum) -> new EventModel()
